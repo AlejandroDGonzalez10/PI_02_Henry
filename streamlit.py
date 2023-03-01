@@ -101,59 +101,79 @@ if selection == 'Análisis del SPX500':
 
 
 
-# # cargar datos previamente descargados o almacenados en la nube
-# df_sp500 = pd.read_csv('sp500_data.csv')
-# # filtrar empresas con criterios de inversión específicos
-# filtro = (df_sp500["Market Cap"] > 1000000000) & (df_sp500["Price/Earnings"] < 20)
-# empresas_filtradas = df_sp500[filtro]
-# # calcular el retorno de inversión esperado y el riesgo
-# empresas_filtradas["ROI Esperado"] = empresas_filtradas["Price Target"] / empresas_filtradas["Last Price"] - 1
-# empresas_filtradas["Riesgo"] = empresas_filtradas["Beta"] * empresas_filtradas["Volatility"]
-# # ordenar empresas por ROI esperado
-# empresas_ordenadas_roi = empresas_filtradas.sort_values(by=["ROI Esperado"], ascending=False).reset_index(drop=True)
-# # ordenar empresas por riesgo
-# empresas_ordenadas_riesgo = empresas_filtradas.sort_values(by=["Riesgo"]).reset_index(drop=True)
-# # mostrar mejores recomendaciones basadas en ROI esperado
-# st.write("Mejores recomendaciones basadas en ROI esperado:")
-# st.dataframe(empresas_ordenadas_roi[["Company", "ROI Esperado"]].head(10))
-# # mostrar mejores recomendaciones basadas en riesgo
-# st.write("Mejores recomendaciones basadas en riesgo:")
-# st.dataframe(empresas_ordenadas_riesgo[["Company", "Riesgo"]].head(10))
+    # cargar datos previamente descargados o almacenados en la nube
+    df_sp500 = pd.read_csv('sp500_data.csv')
+    # filtrar empresas con criterios de inversión específicos
+    filtro = (df_sp500["Market Cap"] > 1000000000) & (df_sp500["Price/Earnings"] < 20)
+    empresas_filtradas = df_sp500[filtro]
+    # calcular el retorno de inversión esperado y el riesgo
+    empresas_filtradas["ROI Esperado"] = empresas_filtradas["Price Target"] / empresas_filtradas["Last Price"] - 1
+    empresas_filtradas["Riesgo"] = empresas_filtradas["Beta"] * empresas_filtradas["Volatility"]
+    # ordenar empresas por ROI esperado
+    empresas_ordenadas_roi = empresas_filtradas.sort_values(by=["ROI Esperado"], ascending=False).reset_index(drop=True)
+    # ordenar empresas por riesgo
+    empresas_ordenadas_riesgo = empresas_filtradas.sort_values(by=["Riesgo"]).reset_index(drop=True)
+    # mostrar mejores recomendaciones basadas en ROI esperado
+    st.write("Mejores recomendaciones basadas en ROI esperado:")
+    st.dataframe(empresas_ordenadas_roi[["Company", "ROI Esperado"]].head(10))
+    # mostrar mejores recomendaciones basadas en riesgo
+    st.write("Mejores recomendaciones basadas en riesgo:")
+    st.dataframe(empresas_ordenadas_riesgo[["Company", "Riesgo"]].head(10))
+    
+    
+    # Descargar datos de Yahoo Finance
+    mnst = yf.download("MNST", start="2010-01-01", end="today")
+    odfl = yf.download("ODFL", start="2010-01-01", end="today")
+    tsco = yf.download("TSCO", start="2010-01-01", end="today")
+    nvda = yf.download("NVDA", start="2010-01-01", end="today")
+    aapl = yf.download("AAPL", start="2010-01-01", end="today")
+
+    # Crear gráfico de precios con Plotly
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=mnst.index, y=mnst['Adj Close'], name='MNST'))
+    fig.add_trace(go.Scatter(x=odfl.index, y=odfl['Adj Close'], name='ODFL'))
+    fig.add_trace(go.Scatter(x=tsco.index, y=tsco['Adj Close'], name='TSCO'))
+    fig.add_trace(go.Scatter(x=nvda.index, y=nvda['Adj Close'], name='NVDA'))
+    fig.add_trace(go.Scatter(x=aapl.index, y=aapl['Adj Close'], name='AAPL'))
+
+    # Actualizar diseño del gráfico
+    fig.update_layout(title='Precios históricos de cierre ajustados de MNST, ODFL, TSCO, NVDA, AAPL',
+                  xaxis_title='Fecha', yaxis_title='Precio USD')
+
+    # Mostrar gráfico en Streamlit
+    st.plotly_chart(fig)
 
 
-# if selection == 'Recomendaciones de inversión':
+ if selection == 'Recomendaciones de inversión':
 
-#     st.title('Recomendaciones de inversión')
+     st.title('Recomendaciones de inversión')
   
-#     # Cargar los datos de precios de cierre ajustados de las empresas de SPX desde 2000 hasta la fecha actual
-#     spx500stock = pd.read_csv('stockspy2.csv')
+     # Cargar los datos de precios de cierre ajustados de las empresas de SPX desde 2000 hasta la fecha actual
+     spx500stock = pd.read_csv('stockspy2.csv')
     
    
-#     # Seleccionar las empresas con los mayores retornos anualizados
-#     n_recommendations = 10
-#     top_returns = spx500stock.nlargest(n_recommendations, columns='Adj Close')
+     # Seleccionar las empresas con los mayores retornos anualizados
+     n_recommendations = 10
+     top_returns = spx500stock.nlargest(n_recommendations, columns='Adj Close')
 
-#     # Crear un data frame con la información de las empresas seleccionadas
-#     recommendations = top_returns[['Symbol', 'Sector', 'Industria', 'Adj Close']].reset_index()
-#     recommendations.columns = ['Symbol', 'Empresa', 'Sector', 'Industria', 'Retorno anualizado']
-
-#     # Mostrar el data frame en una aplicación de Streamlit
-#     st.write(recommendations)
-    
-    
-#     st.title('Recomendaciones de periodo de tiempo de 5 años')
-  
-#     # Cargar los datos de precios de cierre ajustados de las empresas de SPX desde 2000 hasta la fecha actual
-#     sp500stock = pd.read_csv('stockspy3.csv')
-    
+     # Crear un data frame con la información de las empresas seleccionadas
+     recommendations = top_returns[['Symbol', 'Sector', 'Industria', 'Adj Close']].reset_index()
+     recommendations.columns = ['Symbol', 'Empresa', 'Sector', 'Industria', 'Retorno anualizado']
+     # Mostrar el data frame en una aplicación de Streamlit
+     st.write(recommendations)
    
-#     # Seleccionar las empresas con los mayores retornos anualizados
-#     n_recommendations = 10
-#     top_returns = sp500stock.nlargest(n_recommendations, columns='Adj Close')
-
-#     # Crear un data frame con la información de las empresas seleccionadas
-#     recommendations = top_returns[['Symbol', 'Sector', 'Industria', 'Adj Close']].reset_index()
-#     recommendations.columns = ['Symbol', 'Empresa', 'Sector', 'Industria', 'Retorno anualizado']
-
-#     # Mostrar el data frame en una aplicación de Streamlit
-#     st.write(recommendations)
+    
+     st.title('Recomendaciones de periodo de tiempo de 5 años')
+ 
+     # Cargar los datos de precios de cierre ajustados de las empresas de SPX desde 2000 hasta la fecha actual
+     sp500stock = pd.read_csv('stockspy3.csv')
+   
+  
+     # Seleccionar las empresas con los mayores retornos anualizados
+     n_recommendations = 10
+     top_returns = sp500stock.nlargest(n_recommendations, columns='Adj Close')
+     # Crear un data frame con la información de las empresas seleccionadas
+     recommendations = top_returns[['Symbol', 'Sector', 'Industria', 'Adj Close']].reset_index()
+     recommendations.columns = ['Symbol', 'Empresa', 'Sector', 'Industria', 'Retorno anualizado']
+     # Mostrar el data frame en una aplicación de Streamlit
+     st.write(recommendations)
