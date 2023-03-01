@@ -26,3 +26,6 @@ El objetivo principal es conocer la situación del mercado bursátil en los últ
 
 #Conclusiones
 El análisis del mercado bursátil de SP500 permite dar un contexto de la situación actual y generar recomendaciones de inversión. El dashboard y los KPIs permiten visualizar de forma clara la información relevante y tomar decisiones informadas.
+
+#Archivos dataframe utilizados.
+https://drive.google.com/drive/folders/1Bfpky59sOguJD3Lgqeoubu4k2HYaoHE9?usp=share_link
